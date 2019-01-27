@@ -1,0 +1,32 @@
+page-settings {
+    .vertical-menu {
+        width: auto;
+    }
+    
+    .vertical-menu a {
+        color: black;
+        display: block;
+        padding: 12px;
+        text-decoration: none;
+    }
+    
+    .vertical-menu a:hover {
+        background-color: rgb(131, 59, 0);
+        color: white;
+    }
+
+    .scroll-content{
+		margin-top: 50px;
+		text-align: center;
+		// hide the scrollbar
+		overflow-y: hidden !important;
+    }
+    
+    .colorChoice1{
+        background-color: rgb(255, 215, 107);
+    }
+
+    .colorChoice2{
+        background-color: rgb(252, 172, 23);
+    }
+}
