@@ -1,0 +1,55 @@
+<ion-menu [content]="mycontent">
+  <ion-content>
+    <p>{{ user?.firstname }} {{ user?.lastname }}</p>
+    <ion-list>
+      <ion-item transparent no-lines>
+        <!-- <ion-icon name="home"></ion-icon> -->
+        Home
+      </ion-item>
+      <ion-item transparent no-lines (click)="profilePage()" >
+        <!-- <ion-icon name="person"></ion-icon> -->
+        Profile
+      </ion-item>          
+      <ion-item transparent no-lines (click)="settingsPage()">
+        <!-- <ion-icon name="settings"></ion-icon>  -->
+        Settings
+      </ion-item>           
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<ion-nav #mycontent [root]="menuPage"></ion-nav>
+<ion-header no-border>
+  <ion-navbar transparent>
+    <button ion-button menuToggle><ion-icon name="menu"></ion-icon></button>
+    <ion-title>Home</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content fullscreen padding>
+<div>
+  <ion-card>
+    <ion-card-header>
+      <ion-title>Reservation</ion-title>
+    </ion-card-header>
+      <ion-card-content>
+        <div *ngIf=user.hasReserved; else #newBooking>
+            <button ion-button clear right color="default" name="viewReservation">View reservation</button>
+        </div>
+        <div #newBooking>
+            <button ion-button clear right color="secondary" name="reserveButton" (click)="reservationPage()">Book a space</button>
+        </div>
+      </ion-card-content>   
+  </ion-card>
+</div>
+    <!-- <ion-card>
+      <ion-card-header>
+        <ion-title>No Reservations Yet!</ion-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <button ion-button clear right color="secondary" name="reserveButton" (click)="reservationPage()">Book a space</button>
+        Add card content here!
+      </ion-card-content> -->
+    <!-- </ion-card> -->
+</ion-content>
