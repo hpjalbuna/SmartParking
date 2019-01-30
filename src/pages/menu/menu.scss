@@ -1,0 +1,65 @@
+page-menu {
+    .background{
+        background-color: rgb(240, 240, 96)
+    }
+
+    p{
+        padding-left: 15px;
+    }
+
+    label {
+        display: block;
+    }
+
+    ion-header {
+        box-shadow: 0;
+    }
+
+    ion-navbar {
+        height: 60px;
+    }
+
+    .navbar-title {
+        text-align: center;
+    }
+    
+    ion-content {
+        background-image: url('https://www.xmple.com/wallpaper/blue-white-gradient-linear-1920x1080-c2-fffafa-87cefa-a-270-f-14.svg');
+        background-size: cover;
+        background-position-x: 50%;
+    }
+
+    ion-list {
+        font-size: 50px;
+    }
+
+    ion-item {
+        background: transparent !important;
+        font-size: 20px !important;
+        padding-left: 20px !important;
+        font-size: 60px;
+        border-color: black;
+        border-width: 10px;
+    }
+
+    ion-icon {
+        font-size: 60px;
+        display: inline-block;
+    }
+
+    label { 
+        font-size: 60px;
+        padding-bottom: 15px;
+        color: black;
+        display: inline-block;
+    }
+
+    ion-card {
+        border-radius: 20px !important;
+        box-shadow: none !important;
+    }
+
+    #reserveButton{
+        background-color: orange;
+    }
+}
