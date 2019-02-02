@@ -17,7 +17,10 @@ import { Reservation } from '../../models/reservation';
   templateUrl: 'reserve.html',
 })
 export class ReservePage {
+  public reservation = {} as Reservation;
   public spaces: Array<any> = [];
+  public categories: Array<any> = [];
+  public category: String;
 
   catRef: firebase.database.Reference = this.afDatabase.database.ref(`categories`);
   spaceRef: firebase.database.Reference = this.afDatabase.database.ref(`spaces`);
@@ -34,40 +37,19 @@ export class ReservePage {
   }
 
   ngOnInit(){
-    let alert = this.alertCtrl.create();
-    alert.setTitle('What you will you do today?');
-
-    this.catRef.on('value', itemSnapshot => {
-      itemSnapshot.forEach( itemSnap => {
-        alert.addInput({
-          type: 'checkbox',
-          label: itemSnap.val(),
-          value: itemSnap.val()
-        });
-      });
-    });
-
-    alert.addButton('Cancel');
-    alert.addButton({
-      text: 'Next',
-      handler: data => {
-        this.findSpace(data.toString().toLowerCase());
-      }
-    });
-    alert.present(); 
   }
 
   ionViewWillLoad(){
     this.catRef.on('value', itemSnapshot => {
-      this.spaces = [];
       itemSnapshot.forEach( itemSnap => {
-          this.spaces.push(itemSnap.val());
-          return false;
+        this.categories.push(itemSnap.val());
+        console.log(itemSnap.val());
       });
-  });
+    });
   }
 
   ionViewDidLoad() {
+
        
   }
 
@@ -89,6 +71,7 @@ export class ReservePage {
       type: 'time',
       value: '12:00'
     });
+    
 
     alert.addButton('No, Thanks');
     alert.addButton({

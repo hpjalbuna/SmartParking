@@ -64,47 +64,16 @@ export class MenuPage {
   }
 
   reservationPage(){
-    let alert = this.alertCtrl.create();
-    var userId = this.afAuth.auth.currentUser.uid;
-    var hasReserved: boolean;    
+    this.navCtrl.push('ReservePage');
 
-    this.afDatabase.database.ref(`users/${userId}/hasReserved`).once('value').then(function(snapshot){
-      hasReserved = snapshot.val();
-      console.log(hasReserved)      
-    });
+    // let alert = this.alertCtrl.create();
+    // var userId = this.afAuth.auth.currentUser.uid;
+    // var hasReserved: boolean;    
 
-    if(hasReserved){        
-      alert.setTitle('Alert');
-      alert.setMessage('You have already made a reservation');
-      alert.addButton('OK');
-      alert.present();
-    }else{        
-      this.showCategories();
-    }
-  }
-
-  showCategories(){
-    let alert = this.alertCtrl.create();
-    alert.setTitle('What you will you do today?');
-
-    this.catRef.on('value', itemSnapshot => {
-      itemSnapshot.forEach( itemSnap => {
-        alert.addInput({
-          type: 'checkbox',
-          label: itemSnap.val(),
-          value: itemSnap.val()
-        });
-      });
-    });
-
-    alert.addButton('Cancel');
-    alert.addButton({
-      text: 'Next',
-      handler: data => {
-        this.findSpace(data.toString().toLowerCase());
-      }
-    });
-    alert.present(); 
+    // this.afDatabase.database.ref(`users/${userId}/hasReserved`).once('value').then(function(snapshot){
+    //   hasReserved = snapshot.val();
+    //   console.log(hasReserved)      
+    // });
   }
 
   findSpace(input: string){    

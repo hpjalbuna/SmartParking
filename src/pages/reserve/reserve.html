@@ -1,13 +1,27 @@
-<ion-header>
-
-  <ion-navbar>
-    <ion-title>Reserve</ion-title>
-  </ion-navbar>
-
-</ion-header>
-
-
-<ion-content padding>
-
+<ion-header no-border>
+    <ion-navbar transparent>
+      <ion-title>New Reservation</ion-title>
+    </ion-navbar>
   
-</ion-content>
+  </ion-header>
+  
+  
+  <ion-content padding>
+    <ion-list>  
+      <ion-item>
+        <ion-label>Start Time: </ion-label> <ion-datetime min="10:00" max="21:00" pickerFormat="hh:mm A"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>End Time: </ion-label> <ion-datetime min="10:00" max="21:00" pickerFormat="hh:mm A"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>Nearest to: </ion-label>
+        <ion-select [(ngModel)]="category" multiple="False">
+          <ion-option *ngFor="let cat of categories" value="{{cat}}">{{ cat }}</ion-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+   
+    <button ion-button>Find a space</button>
+  </ion-content>
+  
