@@ -1,18 +1,17 @@
 <ion-header>
-
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>Settings</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
   <ion-list>
-    <button ion-item>Account Settings</button>
-    <button ion-item>Help</button>
-    <button ion-item>Contact Us</button>
-    <button ion-item>About</button>
-    <button ion-item (click)="logOut()">Log-out</button>
+    <ion-item transparent no-lines>Account Settings</ion-item>
+    <ion-item transparent no-lines>Help</ion-item>
+    <ion-item transparent no-lines>Contact Us</ion-item>
+    <ion-item transparent no-lines>About</ion-item>
+    <ion-item transparent no-lines (click)="logOut()">Log-out</ion-item>
   </ion-list>    
 </ion-content>

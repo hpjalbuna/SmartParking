@@ -3,5 +3,6 @@ export interface Reservation {
     user: string;
     start: string;
     end: string,
-    hasReserved: boolean;
+    fee: number,
+    reserved: boolean;
 }

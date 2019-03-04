@@ -32,8 +32,12 @@ export class UserPage {
     });  
   }
 
-  editProfile(){
-    this.showFields = true;
+  // editProfile(){
+  //   this.showFields = true;
+  // }
+
+  editPage(){
+    this.navCtrl.push('EditPage');
   }
 
   saveProfile(user: User){

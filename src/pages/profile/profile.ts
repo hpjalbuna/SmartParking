@@ -3,7 +3,8 @@ import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angu
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { User } from '../../models/user';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+// import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @IonicPage()
 @Component({
@@ -35,9 +36,10 @@ export class ProfilePage {
 
   alert(message: string){
     this.alertCtrl.create({
-      title: "Alert",
+      title: "Notice",
       message: message,
-      buttons: ['OK']
+      buttons: ['OK'],
+      mode: "ios"
     }).present();
   }
 

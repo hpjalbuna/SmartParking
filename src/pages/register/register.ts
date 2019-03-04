@@ -16,18 +16,22 @@ import { AngularFireDatabase } from 'angularfire2/database';
 export class RegisterPage {
   user = {} as User;
 
-  constructor(private alertCtrl: AlertController, private afStore: AngularFirestore, private afAuth: AngularFireAuth, private afDatabase: AngularFireDatabase, public navCtrl: NavController, public navParams: NavParams) {
+  // constructor(private alertCtrl: AlertController, private afStore: AngularFirestore, private afAuth: AngularFireAuth, private afDatabase: AngularFireDatabase, public navCtrl: NavController, public navParams: NavParams) {
+  // }
+
+  constructor(private alertCtrl: AlertController, public afStore: AngularFirestore, private afAuth: AngularFireAuth, public afDatabase: AngularFireDatabase, public navCtrl: NavController, public navParams: NavParams) {
   }
 
   alert(message: string){
     this.alertCtrl.create({
-      title: "Register Error",
+      title: "Notice",
       message: message,
-      buttons: ['OK']
+      buttons: ['OK'],
+      mode: "ios"
     }).present();
   }
        
-  async register(user: User){
+  register(user: User){
     this.afAuth.auth.createUserWithEmailAndPassword(user.email, user.password)
     .then ( auth => {
       this.alert('Sucess! You\'re registered!');

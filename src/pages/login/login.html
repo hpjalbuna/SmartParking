@@ -6,13 +6,18 @@
       </h2>
     </div>
 
-    <form #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
+    <ion-card-header>
+      <ion-img width="140" height="140" src="./assets/imgs/ParkGanern2.jpg"></ion-img>
+
+    </ion-card-header>
+
+    <form #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off" class="forms">
       <ion-item>
         <ion-label floating>
           <ion-icon name="mail" item-start class="text-primary"></ion-icon>
           Email
         </ion-label>
-        <ion-input name="username" id="loginField" type="text" required [(ngModel)]="user.email" #email></ion-input>
+        <ion-input name="username" id="loginField" type="text" required [(ngModel)]="Email" #email></ion-input>
       </ion-item>
   
       <ion-item>
@@ -20,7 +25,7 @@
           <ion-icon name="lock" item-start class="text-primary" ></ion-icon>
           Password
         </ion-label>
-        <ion-input name="password" id="passwordField" type="password" required [(ngModel)]="user.password" #password></ion-input>
+        <ion-input name="password" id="passwordField" type="password" required [(ngModel)]="Password" #password></ion-input>
       </ion-item>
   
       <p></p>

@@ -6,21 +6,35 @@
 -->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>User</ion-title>
+  <ion-navbar color="primary">
+    <ion-title>Profile</ion-title>
   </ion-navbar>
 
 </ion-header>
 
-
 <ion-content padding>
   <div class="userProfile" *ngIf="(user?.firstname && user?.lastname) && !showFields; else editProfile">
+    <!-- <ion-img width="150" height="150" src="./assets/imgs/UserProfile.png"></ion-img> -->
+
+    <div class="container">
+      <img src="./assets/imgs/UserProfile3.png" alt="Avatar" class="image">
+      <!-- <div class="middle">
+        <div class="text">Change Photo</div>
+      </div> -->
+    </div>
+
+
+
     <ion-list>
-      <h4> Name:  {{ user?.firstname }} {{ user?.lastname }} </h4>
+      <!-- <h4> Name:  {{ user?.firstname }} {{ user?.lastname }} </h4>
       <h4> Birthday: {{ user?.birthday }} </h4>
-      <h4> Plate No.: {{ user?.platenum }} </h4>
+      <h4> Plate number: {{ user?.platenum }} </h4> -->
+
+      <h4 id> <ion-icon class="profileIcon" name="person"></ion-icon> {{ user?.firstname }} {{ user?.lastname }} </h4>
+      <h4 id> <ion-icon class="profileIcon" name="leaf"></ion-icon> {{ user?.birthday }} </h4>
+      <h4 id> <ion-icon class="profileIcon" name="car"></ion-icon> {{ user?.platenum }} </h4>
     </ion-list>
-    <button ion-button round secondary medium (click)="editProfile()">Edit Profile</button>
+    <button ion-button round secondary medium (click)="editPage()">Edit Profile</button>
   </div>
   <ng-template #editProfile>
     <div class="editUser">

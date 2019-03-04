@@ -1,8 +1,10 @@
-import { Component, ContentChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { AngularFireDatabase }from 'angularfire2/database';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Reservation } from '../../models/reservation';
+import * as moment from 'moment';
+import { extendMoment } from 'moment-range';
 
 /**
  * Generated class for the ReservePage page.
@@ -16,13 +18,17 @@ import { Reservation } from '../../models/reservation';
   selector: 'page-reserve',
   templateUrl: 'reserve.html',
 })
-export class ReservePage {
-  public spaces: Array<any> = [];
 
-  catRef: firebase.database.Reference = this.afDatabase.database.ref(`categories`);
+export class ReservePage {
+  @ViewChild('startPicker') pickerStart;
+  public reservation = {} as Reservation;
+  public categories: Array<any> = [];
+  public category: String;
+  listRef: firebase.database.Reference = this.afDatabase.database.ref(`list`);
   spaceRef: firebase.database.Reference = this.afDatabase.database.ref(`spaces`);
 
-  constructor(private afAuth: AngularFireAuth, private afDatabase: AngularFireDatabase, public alertCtrl: AlertController, public navCtrl: NavController, public navParams: NavParams) {
+  constructor(private afAuth: AngularFireAuth, private afDatabase: AngularFireDatabase, public alertCtrl: AlertController, public navCtrl: NavController, public navParams: NavParams){
+
   }
 
   alert(message: string){
@@ -34,72 +40,28 @@ export class ReservePage {
   }
 
   ngOnInit(){
-    let alert = this.alertCtrl.create();
-    alert.setTitle('What you will you do today?');
-
-    this.catRef.on('value', itemSnapshot => {
-      itemSnapshot.forEach( itemSnap => {
-        alert.addInput({
-          type: 'checkbox',
-          label: itemSnap.val(),
-          value: itemSnap.val()
-        });
-      });
-    });
-
-    alert.addButton('Cancel');
-    alert.addButton({
-      text: 'Next',
-      handler: data => {
-        this.findSpace(data.toString().toLowerCase());
-      }
-    });
-    alert.present(); 
+    
   }
 
   ionViewWillLoad(){
-    this.catRef.on('value', itemSnapshot => {
-      this.spaces = [];
+    var minTime = moment('10:00', ['HH:mm', moment.ISO_8601]);
+    var maxTime = moment('21:00', ['HH:mm', moment.ISO_8601]).format();
+
+    this.listRef.on('value', itemSnapshot => {
       itemSnapshot.forEach( itemSnap => {
-          this.spaces.push(itemSnap.val());
-          return false;
-      });
-  });
-  }
-
-  ionViewDidLoad() {
-       
-  }
-
-  findSpace(input: string){    
-    var space = "";
-    let alert = this.alertCtrl.create();
-    this.spaceRef.orderByKey().on("value", function(snapshot){
-      snapshot.forEach(childSnapshot => {       
-        if((childSnapshot.child('category').val() === input) && (childSnapshot.child('status').val() === 'available')){
-          space = childSnapshot.key;
-        }    
+        this.categories.push(itemSnap.val());
+        console.log(itemSnap.val());
       });
     });
+  }
 
-    alert.setTitle("Recommendation");
-    alert.setSubTitle("We suggest space "+ space + "!");
-    alert.addInput({
-      name: 'time',
-      type: 'time',
-      value: '12:00'
-    });
-    
+  ionViewDidLoad() {    
 
-    alert.addButton('No, Thanks');
-    alert.addButton({
-      text: 'Agree',
-      handler: data => {
-        this.reserveSpace(data.time, space);
-      }
-    });
-    alert.present();
-  }  
+  }
+
+  getToday(): string {
+    return moment(new Date(), ["HH:mm A", moment.ISO_8601]).format();
+  }
 
   reserveSpace(time: string, space: string){
     let reservation = {} as Reservation;
@@ -114,8 +76,52 @@ export class ReservePage {
         this.alert("Congratulations");
       });
     });
-
-
   }
-  
+ 
+  findSpace(category: string, start: any, end: any){
+    var tempSpaces = new Array();
+    var hasConflict = false;
+    const rangeMoment = extendMoment(moment);
+    if(category === undefined || start === undefined || end === undefined){
+      this.alert("Please complete the form");
+      return;
+    }
+    const reservationRef: firebase.database.Reference = this.afDatabase.database.ref(`reservations`);
+    var userTime = rangeMoment.range(moment(start, 'hh:mm'), moment(end, 'hh:mm'));
+    var promise = new Promise((resolve, reject) => {
+      this.afDatabase.database.ref(`categories/${category}`).orderByValue().on('value', function(snapshot){
+        snapshot.forEach(function(data){
+          if(data.val() === true){
+            reservationRef.child(data.key).orderByKey().on('value',function(snapshot){
+              snapshot.forEach(function(childSnapshot){
+                var bookingData = childSnapshot.val();
+                var time = rangeMoment.range(moment(bookingData.start, 'hh:mm'), moment(bookingData.end, 'hh:mm'));
+                
+                if(userTime.overlaps(time)){
+                  hasConflict = true;                  
+                }
+              });
+              if (hasConflict === false){
+                console.log(snapshot.key);
+                tempSpaces.push(snapshot.key);                
+                resolve();
+              }
+              hasConflict = false;
+            });
+          }
+        });
+      });
+    });
+
+   
+    setTimeout(() => {
+      if(tempSpaces.length == 0){
+        console.log("HAAAA");
+        this.alert("No spaces available for given time and category. Please try again.");
+      }else{
+        this.navCtrl.push('SpacesPage', {data: tempSpaces, start_time: moment(start, 'hh:mm A'), end_time: moment(end, 'hh:mm A'), cat: category});
+      }
+    }, 3000);
+    
+  }
 }

@@ -14,29 +14,45 @@ import * as moment from 'moment';
 })
 export class MenuPage {
   user = {} as User;
+  reservation = {} as Reservation;
   public spaces: Array<any> = [];
 
-  catRef: firebase.database.Reference = this.afDatabase.database.ref(`categories`);
-  spaceRef: firebase.database.Reference = this.afDatabase.database.ref(`spaces`);
   
-  constructor(private afAuth: AngularFireAuth, private afDatabase: AngularFireDatabase, public alertCtrl: AlertController, public navCtrl: NavController, public navParams: NavParams) {
-    
+  constructor(private afAuth: AngularFireAuth, public afDatabase: AngularFireDatabase, public alertCtrl: AlertController, public navCtrl: NavController, public navParams: NavParams) {
+
   }
 
-  alert(message: string){
+  alert(message: string, space: string){
     this.alertCtrl.create({
-      title: "Alert",
+      title: "Cancellation",
       message: message,
-      buttons: ['OK']
+      buttons: [
+        {
+          text: 'Ok',
+          handler: () => {
+            this.cancelReservation(space);
+          }        
+        },
+        {
+          text: 'Cancel'
+        }
+      ]
     }).present();
   }
+ 
 
   ionViewWillLoad() {
    
   }
   
   ionViewDidLoad() {
-    
+    this.afAuth.authState.take(1).subscribe(auth => {
+      this.afDatabase.database.ref(`/users/${auth.uid}`).on('value', userSnapshot => {
+        this.user = userSnapshot.val();
+        console.log(this.user.hasReserved);
+        this.reservation = this.user.reservation;
+      });
+    });     
   }
 
   profilePage(){
@@ -59,135 +75,39 @@ export class MenuPage {
   }
 
   reservationPage(){
-    let alert = this.alertCtrl.create();
-    var userId = this.afAuth.auth.currentUser.uid;
-    var hasReserved: boolean;    
+    this.navCtrl.push('ReservePage');
 
-    this.afDatabase.database.ref(`users/${userId}/hasReserved`).once('value').then(function(snapshot){
-      hasReserved = snapshot.val();
-      console.log(hasReserved)      
-    });
+    // let alert = this.alertCtrl.create();
+    // var userId = this.afAuth.auth.currentUser.uid;
+    // var hasReserved: boolean;    
 
-    if(hasReserved){        
-      alert.setTitle('Alert');
-      alert.setMessage('You have already made a reservation');
-      alert.addButton('OK');
-      alert.present();
-    }else{        
-      this.showCategories();
-    }
+    // this.afDatabase.database.ref(`users/${userId}/hasReserved`).once('value').then(function(snapshot){
+    //   hasReserved = snapshot.val();
+    //   console.log(hasReserved)      
+    // });
   }
 
-  showCategories(){
-    let alert = this.alertCtrl.create();
-    alert.setTitle('What you will you do today?');
+  showConfirm(reservation: Reservation){
+    this.alert('Are you sure you want to cancel your reservation for space ' + reservation.space + ' from ' + reservation.start + ' to ' + reservation.end + '?', reservation.space);
+  }
 
-    this.catRef.on('value', itemSnapshot => {
-      itemSnapshot.forEach( itemSnap => {
-        alert.addInput({
-          type: 'checkbox',
-          label: itemSnap.val(),
-          value: itemSnap.val()
+  cancelReservation(space: string){
+    this.afAuth.authState.take(1).subscribe(auth => {
+      let self = this;
+      this.afDatabase.database.ref(`/users/${auth.uid}/reservation`).remove();
+      this.afDatabase.database.ref(`/users/${auth.uid}`).update({hasReserved: false});
+
+      this.afDatabase.database.ref(`reservations/${space}`).orderByKey().on('value', function(snapshot){
+        snapshot.forEach(function(data){
+          var reservationData = data.val();
+          if(reservationData.user === auth.uid){
+            self.afDatabase.database.ref(`reservations/${space}/${data.key}`).remove();
+          }
         });
       });
-    });
+    });  
 
-    alert.addButton('Cancel');
-    alert.addButton({
-      text: 'Next',
-      handler: data => {
-        this.findSpace(data.toString().toLowerCase());
-      }
-    });
-    alert.present(); 
-  }
-
-  findSpace(input: string){    
-    var space = "";
-    let alert = this.alertCtrl.create();
-    this.spaceRef.orderByKey().on("value", function(snapshot){
-      snapshot.forEach(childSnapshot => {       
-        if((childSnapshot.child('category').val() === input)){
-          space = childSnapshot.key;
-        }
-      });      
-    });
-   
-    alert.setTitle("Recommendation");
-    alert.setSubTitle("We suggest space "+ space + "!");
-    alert.addInput({
-      name: 'start',
-      type: 'time',
-      value: '00:00'
-    });
-    alert.addInput({
-      name: 'end',
-      type: 'time',
-      value: '00:00'
-    });
-
-
-    alert.addButton('No, Thanks');
-    alert.addButton({
-      text: 'Reserve',
-      handler: data => {
-        this.reserveSpace(data.start, data.end, space)
-        
-      }
-    });    
-    alert.present();  
     
-  } 
-
-  reserveSpace(start: any, end: any, space: string){    
-    const reservationRef: firebase.database.Reference = this.afDatabase.database.ref(`reservations/${space}`);
-    let reservation = {} as Reservation;
-    var isValid: boolean;
-    var successful: boolean;
-    let format = 'hh:mm';
-    var startTime = moment(start, format);
-    reservationRef.orderByKey().on("value", function(snapshot){
-      snapshot.forEach(childSnapshot => {      
-        var startFound = moment(childSnapshot.child('start').val(), format);
-        var endFound = moment(childSnapshot.child('end').val(), format);
-        if (startTime.isBetween(startFound, endFound) || startTime.isSame(startFound)){
-          console.log(startTime.isBetween(startFound, endFound))
-          isValid = false
-          return true
-        }else{
-          isValid = true
-        }
-      }); 
-    });
-    if (!isValid){
-      this.alert("This time slot is already reserved. Please try again");
-    }else{
-      
-      this.afAuth.authState.take(1).subscribe(auth => {
-        reservation.user = auth.uid;
-        reservation.start = start;
-        reservation.end = end;
-        
-        reservationRef.push(reservation).then (() => {
-          this.alert("Congratulations");      
-        });
-        const userRef: firebase.database.Reference = this.afDatabase.database.ref(`users/${auth.uid}`);
-        userRef.update({ hasReserved: true });  
-        successful = true;    
-      });           
-    }  
-    setInterval(function(){
-     
-      if(successful){
-        var now = moment();
-        console.log("running");
-        if (startTime.diff(now, 'minutes') <= 30){
-          var diff: Number = startTime.diff(now, 'minutes') + 1
-          this.alert("You have " + diff + " minutes left. Arrive on time to avoid cancellation.");
-        } 
-      }      
-    }, 10000)
-
   }
   
   async logOut(){

@@ -16,17 +16,23 @@ page-settings {
     }
 
     .scroll-content{
-		margin-top: 50px;
-		text-align: center;
-		// hide the scrollbar
-		overflow-y: hidden !important;
-    }
-    
-    .colorChoice1{
-        background-color: rgb(255, 215, 107);
+        margin-top: 50px;
+        text-align: center;
+        // hide the scrollbar
+        overflow-y: hidden !important;
     }
 
-    .colorChoice2{
-        background-color: rgb(252, 172, 23);
+    ion-content {
+        // background-image: url('https://webgradients.com/public/webgradients_png/007%20Sunny%20Morning.png');
+        background-size: cover;
+        background-position-x: 50%;
+    }
+
+    ion-item {
+        background: transparent !important;
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+        font-size: 15px !important;
+        color: #424242 !important;
     }
 }
