@@ -58,21 +58,37 @@ export class SpacesPage {
     }).present();
   }
 
-  ionViewWillLoad(){
+  ionViewWillLoad(){   
+   
+      
+  }
+
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad SpacesPage');
+  }
+
+  ionViewDidEnter(){
+    var isEnabled
     var test = moment(this.navParams.get('start_time'), 'hh:mm A');
-    console.log(test);
-    console.log(moment(test).format('hh:mm A'));
-    console.log(this.navParams.get('cat'));
     this.listRef.on('value', itemSnapshot => {
       itemSnapshot.forEach( itemSnap => {
         this.categories.push(itemSnap.val());
         console.log(itemSnap.val());
       });
     });
-  }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad SpacesPage');
+    this.afDatabase.database.ref(`spaces`).orderByValue().on('value', spaceSnapshot => {      
+      var result = spaceSnapshot.val(); 
+    
+      for(let k in result){  
+        var space = { id: k, value: true };
+        if (!this.spaces.some(item => item.id === space.id)) {
+          this.spaces.push(space);
+        }
+         
+      }    
+      
+    });
   }
 
   showConfirmed(space: string){

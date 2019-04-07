@@ -1,5 +1,8 @@
 export interface Space {
-    name: string;
-    status: string;
-    category: string;
+    space: string,
+    status: string,
+    start: string,
+    end: string,
+    user: string,
+    fee: number
 }

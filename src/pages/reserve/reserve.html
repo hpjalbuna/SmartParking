@@ -9,10 +9,10 @@
 <ion-content padding>  
     <ion-list> 
       <ion-item>
-        <ion-label>Start Time: </ion-label> <ion-datetime required [(ngModel)]="start" pickerFormat="hh:mm A"></ion-datetime>
+        <ion-label>Start Time: </ion-label> <ion-datetime required [(ngModel)]="start" [min]="minTime" [max]="maxTime" pickerFormat="HH:mm"></ion-datetime>
       </ion-item>
     <ion-item>
-      <ion-label>End Time: </ion-label> <ion-datetime required [(ngModel)]="end" pickerFormat="hh:mm A"></ion-datetime>
+      <ion-label>End Time: </ion-label> <ion-datetime required [(ngModel)]="end" pickerFormat="HH:mm"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label>Category: </ion-label>
