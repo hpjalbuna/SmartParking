@@ -32,12 +32,17 @@ export class ReservePage {
   constructor(private afAuth: AngularFireAuth, private afDatabase: AngularFireDatabase, public alertCtrl: AlertController, public navCtrl: NavController, public navParams: NavParams){
     var open, close;
     this.afDatabase.database.ref(`preferences`).orderByValue().on('value', dataSnapshot => {
+      console.log(dataSnapshot.val())
       var preferences = dataSnapshot.val()
-      open = moment(preferences.minTime).add(8, 'hours');
-      close = moment(preferences.maxTime).add(8, 'hours');
+      console.log(preferences.maxTime)
+      open = moment(preferences.minTime,"HH:mm").add(8, 'hours');
+      close = moment(preferences.maxTime, "HH:mm").add(8, 'hours');
+      console.log(open)
+      this.minTime = moment().set({hour: open.hour(), minute: open.minute(), seconds: 0}).toISOString();
+      this.maxTime = moment().set({hour: close.hour(), minute: close.minute(), seconds: 0}).toISOString();
+      console.log(this.maxTime)
     });
-    this.minTime = moment().set({hour: open, minute: 0, seconds: 0}).toISOString();
-    this.maxTime = moment().set({hour: close, minute: 0, seconds: 0}).toISOString();
+    
   }
 
   alert(message: string){
