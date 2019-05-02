@@ -36,7 +36,7 @@ export class LoginPage {
           this.navCtrl.setRoot('AdminPage');
         }else{
           this.alert('Sucess! You\'re logged in!');
-          this.navCtrl.setRoot('MenuPage');
+          this.navCtrl.setRoot('TabsPage');
         }
     }catch(error){
       this.alert(error);
