@@ -86,6 +86,12 @@ export class ReservePage {
       this.alert("Please complete the form");
       return;
     }
+
+    if(moment(end, 'HH:mm').isBefore(moment(start, 'HH:mm'))){
+      this.alert("End time cannot be earlier than start time. Please review your input.")
+      return;
+    }
+    
     const reservationRef: firebase.database.Reference = this.afDatabase.database.ref(`reservations`);
     var userTime = rangeMoment.range(moment(start, 'hh:mm'), moment(end, 'hh:mm'));
     var promise = new Promise((resolve, reject) => {

@@ -14,18 +14,6 @@
   
   
   <ion-content padding>
-      <ion-grid>
-        <ion-row>
-         <ion-col *ngFor="let space of spaces">
-          <button ion-button id="{{space.value}}" color="{{space.value}}" (click)="showConfirmed(space.id)" [disabled]="space.value" ngDefaultControl>
-            <ion-chip color="{{ space.value }}" [(ngModel)]="reservation.space" ngDefaultControl>
-                <ion-label ngDefaultControl>{{ space.id }}</ion-label>              
-            </ion-chip>
-          </button>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-
     <ion-list>  
       <ion-item>
         <ion-label>Start Time: </ion-label> <ion-datetime [(ngModel)]="reservation.start" placeholder="{{start}}" pickerFormat="hh:mm A"></ion-datetime>
@@ -40,6 +28,16 @@
         </ion-select>
       </ion-item>
     </ion-list>
+
+    <ion-grid class="parkingChart">
+      <ion-row>
+        <ion-col col-3 *ngFor="let space of allSpaces; let i=index">
+            <ion-chip (click)="showConfirmed(space.id)" [color]="space.color" outline="true">
+                <ion-label>{{ space.id }}</ion-label>
+            </ion-chip>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   
   </ion-content>
   
