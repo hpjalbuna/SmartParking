@@ -79,6 +79,7 @@ export class ReservePage {
 
  
   findSpace(category: string, start: any, end: any){
+    var spacesList = [];
     var tempSpaces = new Array();
     var hasConflict = false;
     const rangeMoment = extendMoment(moment);
@@ -97,27 +98,30 @@ export class ReservePage {
     var promise = new Promise((resolve, reject) => {
       this.afDatabase.database.ref(`categories/${category}`).orderByValue().on('value', function(snapshot){
         snapshot.forEach(function(data){
-          if(data.val() === true){
-            reservationRef.child(data.key).orderByKey().on('value',function(snapshot){
-              snapshot.forEach(function(childSnapshot){
-                var bookingData = childSnapshot.val();
-                var time = rangeMoment.range(moment(bookingData.start, 'hh:mm'), moment(bookingData.end, 'hh:mm'));
-                
-                if(userTime.overlaps(time)){
-                  hasConflict = true;                  
-                }
-              });
-              if (hasConflict === false){
-                console.log(snapshot.key);
-                tempSpaces.push({ id: snapshot.key, value: false});                
-                resolve();
+          reservationRef.child(data.key).orderByKey().on('value',function(snapshot){
+            snapshot.forEach(function(childSnapshot){
+              var bookingData = childSnapshot.val();
+              var time = rangeMoment.range(moment(bookingData.start, 'hh:mm'), moment(bookingData.end, 'hh:mm'));
+              
+              if(userTime.overlaps(time)){
+                hasConflict = true              
               }
-              hasConflict = false;
             });
-          }
+            if (hasConflict === false){
+              if(data.val() === true){
+                tempSpaces.push({ id: snapshot.key, color: 'reserved'});  
+              }else{
+                tempSpaces.push({ id: snapshot.key, color: 'available'});  
+              }
+            }else{
+              tempSpaces.push({ id: snapshot.key, color: 'occupied'})
+            }
+            hasConflict = false;
+            });
         });
       });
     });
+  
 
    
     setTimeout(() => {

@@ -31,7 +31,7 @@ export class SpacesPage {
 
   listRef: firebase.database.Reference = this.afDatabase.database.ref(`list`);
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public navParams: NavParams, private afDatabase: AngularFireDatabase, private afAuth: AngularFireAuth) {
-    this.spaces = this.navParams.get('data');
+    this.allSpaces = this.navParams.get('data');
     this.start = moment(this.navParams.get('start_time')).format('hh:mm A');
     this.end = moment(this.navParams.get('end_time')).format('hh:mm A');
     this.category = this.navParams.get('cat');
@@ -40,7 +40,19 @@ export class SpacesPage {
 
   alert(message: string){
     this.alertCtrl.create({
-      title: "Alert",
+      title: "Space is occupied",
+      message: message,
+      buttons: [
+        {
+          text: 'OK',
+        }
+      ]
+    }).present();
+  }
+
+  confirmReservation(message: string){
+    this.alertCtrl.create({
+      title: "Confirm reservation",
       message: message,
       buttons: [
         {
@@ -110,9 +122,14 @@ export class SpacesPage {
     });
   }
 
-  showConfirmed(space: string){
+  showConfirmed(space: any){
     this.space = space;
-    this.alert("Reserve space " + space + " from " + this.start + " to " + this.end + "?");  
+    if(space.color === 'occupied'){
+      this.alert("This space you are trying to reserve is not available. Please select another space.")
+    }else{
+      this.confirmReservation("Reserve space " + space.id + " from " + this.start + " to " + this.end + "?"); 
+    }
+     
 
   }
 

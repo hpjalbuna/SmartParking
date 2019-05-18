@@ -47,10 +47,11 @@ export class MenuPage {
   
   ionViewDidLoad() {
     this.afAuth.authState.take(1).subscribe(auth => {
-      this.afDatabase.database.ref(`/users/${auth.uid}`).on('value', userSnapshot => {
-        this.user = userSnapshot.val();
+      this.afDatabase.database.ref(`/users/${auth.uid}/reservation`).on('value', userSnapshot => {
+        this.reservation = userSnapshot.val();
+        console.log(userSnapshot.val())
+
         console.log(this.user.hasReserved);
-        this.reservation = this.user.reservation;
       });
     });     
   }
